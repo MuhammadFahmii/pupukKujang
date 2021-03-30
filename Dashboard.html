@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          <canvas id="pie"></canvas>
+        </div>
+        <div class="col-sm">
+          <canvas id="bar"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script>
+      // PIE CHART
+      var ctx = document.getElementById("pie").getContext("2d");
+      fetch("http://localhost/native-restserver/Endpoint.php")
+        .then((res) => res.json())
+        .then((result) => {
+          const jk = result.EMP;
+          let pria = 0;
+          let wanita = 0;
+          jk.forEach((data) => {
+            if (data.JK == "Male") {
+              pria += 1;
+            } else {
+              wanita += 1;
+            }
+          });
+          const total = pria + wanita;
+          var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: "pie",
+            // The data for our dataset
+            data: {
+              labels: ["Pria", "Wanita"],
+              datasets: [
+                {
+                  label: "My First dataset",
+                  backgroundColor: "rgb(255, 99, 132)",
+                  borderColor: "rgb(255, 99, 132)",
+                  data: [(pria / total) * 100, (wanita / total) * 100],
+                },
+              ],
+            },
+          });
+        });
+
+      // BAR CHART
+      var bar = document.getElementById("bar").getContext("2d");
+      fetch("http://localhost/native-restserver/Endpoint.php")
+        .then((res) => res.json())
+        .then((result) => {
+          const res = result.EMP;
+          let gm = 0;
+          let si = 0;
+          let sm2 = 0;
+          let su2 = 0;
+          let manager = 0;
+          let sp1 = 0;
+          let supervisor = 0;
+          res.forEach((data) => {
+            const details = data.DETAIL_JABATAN;
+            details.forEach((detail) => {
+              switch (detail.DESC) {
+                case "General Manager":
+                  gm += 1;
+                  break;
+                case "Superintendent":
+                  si += 1;
+                  break;
+                case "Staf Madya II":
+                  sm2 += 1;
+                  break;
+                case "Staf Utama II":
+                  su2 += 1;
+                  break;
+                case "Manager":
+                  manager += 1;
+                  break;
+                case "Staf Pratama I":
+                  sp1 += 1;
+                  break;
+                case "Supervisor":
+                  supervisor += 1;
+                  break;
+              }
+            });
+            var chart = new Chart(bar, {
+              // The type of chart we want to create
+              type: "bar",
+              // The data for our dataset
+              data: {
+                labels: [
+                  "General Manager",
+                  "Superintendent",
+                  "Staf Madya II",
+                  "Staf Utama II",
+                  "Manager",
+                  "Staf Pratama I",
+                  "Supervisor",
+                ],
+                datasets: [
+                  {
+                    label: "JABATAN",
+                    backgroundColor: "rgb(200, 99, 100)",
+                    borderColor: "rgb(255, 99, 132)",
+                    data: [gm, si, sm2, su2, manager, sp1, supervisor, 0],
+                  },
+                ],
+              },
+            });
+          });
+        });
+    </script>
+  </body>
+</html>
